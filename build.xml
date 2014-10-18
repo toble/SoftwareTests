@@ -3,62 +3,80 @@
 	<description>
 		Ant file
 	</description>
-	<property name="BUILD_DIR">builds</property>
+	<property name="builddir">builds</property>
 	<property name="JAR_FILE_NAME">TestExample.jar</property>
 	<property name="MAIN_LOCATION">examplepackage.SmallExample</property>
-	
-	
+
+	<property name="srcdir">src</property>
+	<property name="testsrcdir">srcTest</property>
+
+	<property name="compilebuilddir">binbuild</property>
+	<property name="compiletestdir">bintest</property>
+
+	<path id="classpath.base" />
+	<path id="classpath.test">
+		<pathelement location="lib/junit.jar" />
+		<pathelement location="lib/org.hamcrest.core_1.3.0.v201303031735.jar" />
+		<pathelement location="${compiletestdir}" />
+		<pathelement location="${srcdir}" />
+		<path refid="classpath.base" />
+	</path>
+
 	<target name="compile" depends="cleanall">
-		<mkdir dir="binant/classes" />
-		<javac srcdir="src/" includeantruntime="false" destdir="binant/classes" excludes="UnitTest/*.java" debug="on">
+		<mkdir dir="${compilebuilddir}" />
+		<mkdir dir="${compiletestdir}" />
+		<javac srcdir="${srcdir}" includeantruntime="false" destdir="${compilebuilddir}" debug="off" />
+		<javac includeantruntime="false" destdir="${compiletestdir}" debug="on">
+			<src path="${srcdir}" />
+			<src path="${testsrcdir}" />
+			<classpath refid="classpath.test" />
 		</javac>
 	</target>
-	
-    <target name="jar" depends="compile">
-    	<jar destfile="${BUILD_DIR}/${JAR_FILE_NAME}" basedir="binant/classes">
-            <manifest>
-            	<attribute name="Main-Class" value="${MAIN_LOCATION}" />
-            	<attribute name="Class-Path" value="TestExample.jar" />
-            </manifest>
-        </jar>
+
+	<target name="jar" depends="compile">
+		<jar destfile="${builddir}/${JAR_FILE_NAME}" basedir="${compilebuilddir}">
+			<manifest>
+				<attribute name="Main-Class" value="${MAIN_LOCATION}" />
+				<attribute name="Class-Path" value="${JAR_FILE_NAME}" />
+			</manifest>
+		</jar>
 		<antcall target="clean" />
-    </target>
-	
+	</target>
+
 	<target name="run" depends="jar">
-		<java jar="${BUILD_DIR}/${JAR_FILE_NAME}" fork="true">
+		<java jar="${builddir}/${JAR_FILE_NAME}" fork="true">
 			<arg line="" />
 		</java>
 	</target>
 
 	<target name="run no jar">
-		<java jar="${BUILD_DIR}/${JAR_FILE_NAME}" fork="true">
+		<java jar="${builddir}/${JAR_FILE_NAME}" fork="true">
 			<arg line="" />
 		</java>
 	</target>
-	
+
 	<target name="clean">
-		<delete dir="binant" />
+		<delete dir="${compilebuilddir}" />
+		<delete dir="${compiletestdir}" />
 	</target>
 
-	<target name="cleanall">
-		<delete dir="binant" />
-		<delete file="${JAR_FILE_NAME}" />
+	<target name="cleanall" depends="clean">
+		<delete dir="${builddir}" />
+
 	</target>
 
-	<target name="test" depends="run">
-		
+	<target name="test" depends="compile" >
+		<junit fork="yes">
+			<classpath refid="classpath.test" />
+		    <formatter type="plain" usefile="false" />
+			<test name="examplepackage.ExampleTest" />
+		</junit>
 	</target>
 
 	<target name="javadoc">
-		<delete dir="doc"/>
+		<delete dir="doc" />
 		<mkdir dir="doc" />
-		<javadoc 
-			author="true"
-			version="true"
-			use="true"
-			destdir="doc"
-			sourcepath="src/"
-		/>
+		<javadoc author="true" version="true" use="true" destdir="doc" sourcepath="src/" />
 	</target>
-	
+
 </project>
