@@ -25,13 +25,13 @@
     </target>
 	
 	<target name="run" depends="jar">
-		<java jar="${JAR_FILE_NAME}" fork="true">
+		<java jar="${BUILD_DIR}/${JAR_FILE_NAME}" fork="true">
 			<arg line="" />
 		</java>
 	</target>
 
 	<target name="run no jar">
-		<java jar="${JAR_FILE_NAME}" fork="true">
+		<java jar="${BUILD_DIR}/${JAR_FILE_NAME}" fork="true">
 			<arg line="" />
 		</java>
 	</target>
