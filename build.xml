@@ -45,6 +45,9 @@
 		<delete file="${JAR_FILE_NAME}" />
 	</target>
 
+	<target name="test" depends="run">
+		
+	</target>
 
 	<target name="javadoc">
 		<delete dir="doc"/>
