@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="TestExample" default="jar" basedir=".">
+	<description>
+		Ant file
+	</description>
+	<property name="BUILD_DIR">builds</property>
+	<property name="JAR_FILE_NAME">TestExample.jar</property>
+	<property name="MAIN_LOCATION">examplepackage.SmallExample</property>
+	
+	
+	<target name="compile" depends="cleanall">
+		<mkdir dir="binant/classes" />
+		<javac srcdir="src/" includeantruntime="false" destdir="binant/classes" excludes="UnitTest/*.java" debug="on">
+		</javac>
+	</target>
+	
+    <target name="jar" depends="compile">
+    	<jar destfile="${BUILD_DIR}/${JAR_FILE_NAME}" basedir="binant/classes">
+            <manifest>
+            	<attribute name="Main-Class" value="${MAIN_LOCATION}" />
+            	<attribute name="Class-Path" value="TestExample.jar" />
+            </manifest>
+        </jar>
+		<antcall target="clean" />
+    </target>
+	
+	<target name="run" depends="jar">
+		<java jar="${JAR_FILE_NAME}" fork="true">
+			<arg line="" />
+		</java>
+	</target>
+
+	<target name="run no jar">
+		<java jar="${JAR_FILE_NAME}" fork="true">
+			<arg line="" />
+		</java>
+	</target>
+	
+	<target name="clean">
+		<delete dir="binant" />
+	</target>
+
+	<target name="cleanall">
+		<delete dir="binant" />
+		<delete file="${JAR_FILE_NAME}" />
+	</target>
+
+
+	<target name="javadoc">
+		<delete dir="doc"/>
+		<mkdir dir="doc" />
+		<javadoc 
+			author="true"
+			version="true"
+			use="true"
+			destdir="doc"
+			sourcepath="src/"
+		/>
+	</target>
+	
+</project>
